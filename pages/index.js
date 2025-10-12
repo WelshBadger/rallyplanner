@@ -1,13 +1,25 @@
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { supabase } from '../lib/supabase'
 
 export default function Home() {
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+    }
+    checkUser()
+  }, [])
+
   return (
     <div style={{
       minHeight: '100vh',
       background: '#1e2a3a',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
     }}>
-      {/* Navigation with extended gradient - no border */}
+      {/* Navigation with gradient */}
       <nav style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -34,7 +46,7 @@ export default function Home() {
           </span>
         </div>
         <Link 
-          href="/login"
+          href={user ? "/my-dashboard" : "/login"}
           style={{
             padding: '12px 32px',
             background: '#00d9cc',
@@ -47,7 +59,7 @@ export default function Home() {
             transition: 'all 0.2s'
           }}
         >
-          Log In
+          {user ? 'My Dashboard' : 'Log In'}
         </Link>
       </nav>
 
@@ -79,7 +91,7 @@ export default function Home() {
           Professional rally logistics and team coordination
         </p>
         <Link 
-          href="/signup"
+          href={user ? "/my-dashboard" : "/signup"}
           style={{
             display: 'inline-block',
             padding: '16px 48px',
@@ -94,7 +106,7 @@ export default function Home() {
             letterSpacing: '0.02em'
           }}
         >
-          Get Started
+          {user ? 'Go to Dashboard' : 'Get Started'}
         </Link>
       </div>
 
@@ -278,7 +290,7 @@ export default function Home() {
             Professional logistics and team coordination tools
           </p>
           <Link 
-            href="/signup"
+            href={user ? "/my-dashboard" : "/signup"}
             style={{
               display: 'inline-block',
               padding: '16px 48px',
@@ -293,7 +305,7 @@ export default function Home() {
               letterSpacing: '0.02em'
             }}
           >
-            Get Started
+            {user ? 'Go to Dashboard' : 'Get Started'}
           </Link>
         </div>
       </div>
