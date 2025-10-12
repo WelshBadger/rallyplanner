@@ -7,14 +7,13 @@ export default function Home() {
       background: '#1e2a3a',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
     }}>
-      {/* Navigation with gradient */}
+      {/* Navigation with extended gradient - no border */}
       <nav style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '20px 40px',
-        background: 'linear-gradient(180deg, #000000 0%, #1e2a3a 100%)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
+        padding: '20px 40px 40px',
+        background: 'linear-gradient(180deg, #000000 0%, rgba(30, 42, 58, 0) 100%)'
       }}>
         <div style={{
           display: 'flex',
@@ -55,7 +54,7 @@ export default function Home() {
       {/* Hero Section */}
       <div style={{
         textAlign: 'center',
-        padding: '100px 20px 80px',
+        padding: '60px 20px 80px',
         maxWidth: '1200px',
         margin: '0 auto'
       }}>
