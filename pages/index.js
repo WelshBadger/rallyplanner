@@ -7,14 +7,14 @@ export default function Home() {
       background: '#1e2a3a',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
     }}>
-      {/* Navigation - BLACK HEADER */}
+      {/* Navigation with gradient */}
       <nav style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '20px 40px',
-        background: '#000000',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+        background: 'linear-gradient(180deg, #000000 0%, #1e2a3a 100%)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
       }}>
         <div style={{
           display: 'flex',
