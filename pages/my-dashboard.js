@@ -64,6 +64,7 @@ export default function MyDashboard() {
         </Link>
         <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           <Link href="/add-rally" style={{ color: '#00d9cc', textDecoration: 'none', fontWeight: '600' }}>Add Rally</Link>
+          <Link href="/team" style={{ color: '#00d9cc', textDecoration: 'none', fontWeight: '600' }}>Team</Link>
           <button onClick={handleLogout} style={{ padding: '10px 24px', background: '#00d9cc', color: '#000', border: 'none', borderRadius: '20px', fontWeight: '700', cursor: 'pointer' }}>
             Logout
           </button>
