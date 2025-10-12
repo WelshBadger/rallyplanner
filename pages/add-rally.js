@@ -61,16 +61,15 @@ export default function AddRally() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#1e2a3a', color: 'white', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
-      {/* Black Header */}
+      {/* Gradient Header */}
       <nav style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '20px 40px',
-        background: '#000',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+        padding: '20px 40px 40px',
+        background: 'linear-gradient(180deg, #000000 0%, rgba(30, 42, 58, 0) 100%)'
       }}>
-        <Link href="/home" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'white' }}>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'white' }}>
           <img src="https://eu.chat-img.sintra.ai/dc1642b4-24d4-4708-b881-4a4a3d091f51/085dd2a1-4cb2-4eec-ad91-6a8aa0a1b119/channels4_profile.jpeg" style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '12px' }} />
           <span style={{ fontSize: '1.5rem', fontWeight: '700' }}>Rally Planner</span>
         </Link>
