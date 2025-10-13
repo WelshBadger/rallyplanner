@@ -57,53 +57,115 @@ export default function RallyDetail() {
     }
   }, [id, router.isReady])
 
-  if (loading) return <div>Loading...</div>
+  const pageStyle = {
+    minHeight: '100vh',
+    backgroundColor: '#1e2a3a',
+    color: 'white',
+    fontFamily: 'Arial, sans-serif',
+    padding: '20px'
+  }
+
+  const navStyle = {
+    marginBottom: '30px'
+  }
+
+  const linkStyle = {
+    color: '#00d9cc',
+    textDecoration: 'none',
+    fontSize: '1rem'
+  }
+
+  const sectionStyle = {
+    backgroundColor: '#2d3e50',
+    padding: '30px',
+    borderRadius: '10px',
+    maxWidth: '800px',
+    margin: '0 auto 20px'
+  }
+
+  const headingStyle = {
+    color: '#00d9cc',
+    marginBottom: '20px',
+    fontSize: '2rem'
+  }
+
+  const itemStyle = {
+    backgroundColor: 'rgba(0, 217, 204, 0.1)',
+    padding: '15px',
+    borderRadius: '8px',
+    marginBottom: '10px'
+  }
+
+  if (loading) return (
+    <div style={pageStyle}>
+      <div style={{ textAlign: 'center', marginTop: '100px' }}>Loading...</div>
+    </div>
+  )
 
   if (error) return (
-    <div>
-      <h2>Error: {error}</h2>
-      <button onClick={() => router.reload()}>Try Again</button>
+    <div style={pageStyle}>
+      <div style={{ textAlign: 'center', marginTop: '100px' }}>
+        <h2 style={{ color: 'red' }}>Error: {error}</h2>
+        <button onClick={() => router.reload()}>Try Again</button>
+      </div>
     </div>
   )
 
   return (
-    <div>
-      <Link href="/my-dashboard">← Back to Dashboard</Link>
+    <div style={pageStyle}>
+      <nav style={navStyle}>
+        <Link href="/my-dashboard" style={linkStyle}>
+          ← Back to Dashboard
+        </Link>
+      </nav>
 
-      <h1>{rally.name}</h1>
-      <div>
-        <p>Location: {rally.location}</p>
+      <div style={sectionStyle}>
+        <h1 style={headingStyle}>{rally.name}</h1>
+        <p style={{ marginBottom: '10px' }}>
+          <strong>Location:</strong> {rally.location}
+        </p>
         <p>
-          Dates: {new Date(rally.start_date).toLocaleDateString()} - {' '}
+          <strong>Dates:</strong> {' '}
+          {new Date(rally.start_date).toLocaleDateString()} - {' '}
           {new Date(rally.end_date).toLocaleDateString()}
         </p>
       </div>
 
-      <h2>Team</h2>
-      {teamMembers.length === 0 ? (
-        <p>No team members</p>
-      ) : (
-        teamMembers.map(member => (
-          <div key={member.id}>
-            <p>{member.team_members.name}</p>
-            <p>{member.team_members.role || 'Team Member'}</p>
-          </div>
-        ))
-      )}
+      <div style={sectionStyle}>
+        <h2 style={{ color: '#00d9cc', marginBottom: '15px' }}>Team</h2>
+        {teamMembers.length === 0 ? (
+          <p style={{ color: 'rgba(255,255,255,0.6)' }}>No team members assigned</p>
+        ) : (
+          teamMembers.map(member => (
+            <div key={member.id} style={itemStyle}>
+              <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                {member.team_members.name}
+              </p>
+              <p style={{ color: 'rgba(255,255,255,0.6)' }}>
+                {member.team_members.role || 'Team Member'}
+              </p>
+            </div>
+          ))
+        )}
+      </div>
 
-      <h2>Schedule</h2>
-      {scheduleItems.length === 0 ? (
-        <p>No schedule items</p>
-      ) : (
-        scheduleItems.map(item => (
-          <div key={item.id}>
-            <p>{item.title}</p>
-            <p>
-              {new Date(item.date).toLocaleDateString()} {item.time}
-            </p>
-          </div>
-        ))
-      )}
+      <div style={sectionStyle}>
+        <h2 style={{ color: '#00d9cc', marginBottom: '15px' }}>Schedule</h2>
+        {scheduleItems.length === 0 ? (
+          <p style={{ color: 'rgba(255,255,255,0.6)' }}>No schedule items</p>
+        ) : (
+          scheduleItems.map(item => (
+            <div key={item.id} style={itemStyle}>
+              <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                {item.title}
+              </p>
+              <p style={{ color: 'rgba(255,255,255,0.6)' }}>
+                {new Date(item.date).toLocaleDateString()} {item.time}
+              </p>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   )
 }
