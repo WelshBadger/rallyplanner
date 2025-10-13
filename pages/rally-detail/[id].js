@@ -8,6 +8,7 @@ export default function RallyDetail() {
   const { id } = router.query
   const [rally, setRally] = useState(null)
   const [teamMembers, setTeamMembers] = useState([])
+  const [allTeamMembers, setAllTeamMembers] = useState([])
   const [scheduleItems, setScheduleItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -18,6 +19,12 @@ export default function RallyDetail() {
       if (!id) return
 
       try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+          router.push('/login')
+          return
+        }
+
         const { data: r, error: rallyError } = await supabase
           .from('rally_events')
           .select('*')
@@ -36,6 +43,12 @@ export default function RallyDetail() {
           .select('*, team_members(*)')
           .eq('rally_id', id)
 
+        const { data: allTeam } = await supabase
+          .from('team_members')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('name')
+
         const { data: schedule } = await supabase
           .from('schedule_items')
           .select('*')
@@ -44,6 +57,7 @@ export default function RallyDetail() {
 
         setRally(r)
         setTeamMembers(team || [])
+        setAllTeamMembers(allTeam || [])
         setScheduleItems(schedule || [])
         setLoading(false)
       } catch (unexpectedError) {
@@ -57,6 +71,25 @@ export default function RallyDetail() {
       fetchRallyDetails()
     }
   }, [id, router.isReady])
+
+  const handleAssignTeamMember = async (memberId) => {
+    try {
+      await supabase
+        .from('rally_team_assignments')
+        .insert({ rally_id: id, team_member_id: memberId })
+
+      const { data: team } = await supabase
+        .from('rally_team_assignments')
+        .select('*, team_members(*)')
+        .eq('rally_id', id)
+
+      setTeamMembers(team || [])
+      setShowAssignModal(false)
+    } catch (err) {
+      console.error('Error assigning team member:', err)
+      alert('Failed to assign team member')
+    }
+  }
 
   const pageStyle = {
     minHeight: '100vh',
@@ -152,7 +185,17 @@ export default function RallyDetail() {
     padding: '30px',
     borderRadius: '12px',
     maxWidth: '500px',
-    width: '90%'
+    width: '90%',
+    maxHeight: '70vh',
+    overflowY: 'auto'
+  }
+
+  const modalItemStyle = {
+    ...itemStyle,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    cursor: 'pointer'
   }
 
   if (loading) return (
@@ -169,6 +212,9 @@ export default function RallyDetail() {
       </div>
     </div>
   )
+
+  const assignedIds = teamMembers.map(t => t.team_member_id)
+  const unassignedMembers = allTeamMembers.filter(m => !assignedIds.includes(m.id))
 
   return (
     <div style={pageStyle}>
@@ -309,9 +355,30 @@ export default function RallyDetail() {
         <div style={modalOverlayStyle} onClick={() => setShowAssignModal(false)}>
           <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
             <h2 style={{ color: '#00d9cc', marginBottom: '20px' }}>Assign Team Member</h2>
-            <p style={{ marginBottom: '20px' }}>Modal content will go here</p>
+            {unassignedMembers.length === 0 ? (
+              <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '20px' }}>
+                All team members are already assigned
+              </p>
+            ) : (
+              unassignedMembers.map(member => (
+                <div key={member.id} style={modalItemStyle}>
+                  <div>
+                    <p style={{ fontWeight: '600', marginBottom: '4px' }}>{member.name}</p>
+                    <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>
+                      {member.role || 'Team Member'}
+                    </p>
+                  </div>
+                  <button 
+                    style={{ ...buttonStyle, padding: '6px 12px', fontSize: '0.8rem' }}
+                    onClick={() => handleAssignTeamMember(member.id)}
+                  >
+                    Assign
+                  </button>
+                </div>
+              ))
+            )}
             <button 
-              style={buttonStyle}
+              style={{ ...buttonStyle, marginTop: '20px', width: '100%' }}
               onClick={() => setShowAssignModal(false)}
             >
               Close
