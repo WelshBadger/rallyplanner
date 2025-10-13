@@ -210,3 +210,33 @@ export async function getServerSideProps(context) {
   console.log('Server-side Rally ID:', context.params.id)
   return { props: {} }
 }
+                    ⏰ ${item.time}`}</p>
+                </div>
+                <button onClick={() => handleDeleteSchedule(item.id)} style={{ background: 'rgba(255, 82, 82, 0.2)', color: '#FF5252', border: '1px solid #FF5252', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem' }}>×</button>
+              </div>
+            ))}
+          </div>
+
+          {/* Documents Section */}
+          <div style={{ background: '#2d3e50', borderRadius: '16px', padding: '28px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '20px' }}>Documents</h2>
+            <p style={{ color: 'rgba(255, 255, 255, 0.5)' }}>Coming soon...</p>
+          </div>
+
+          {/* Notes Section */}
+          <div style={{ background: '#2d3e50', borderRadius: '16px', padding: '28px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '20px' }}>Notes</h2>
+            <p style={{ color: 'rgba(255, 255, 255, 0.5)' }}>Coming soon...</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Modals for Team Assignment and Schedule will be added later */}
+    </div>
+  )
+}
+
+export async function getServerSideProps(context) {
+  console.log('Server-side Rally ID:', context.params.id)
+  return { props: {} }
+}
