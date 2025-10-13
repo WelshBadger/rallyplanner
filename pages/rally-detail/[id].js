@@ -7,6 +7,8 @@ export default function RallyDetail() {
   const router = useRouter()
   const { id } = router.query
   const [rally, setRally] = useState(null)
+  const [teamMembers, setTeamMembers] = useState([])
+  const [scheduleItems, setScheduleItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -28,7 +30,20 @@ export default function RallyDetail() {
           return
         }
         
+        const { data: team } = await supabase
+          .from('rally_team_assignments')
+          .select('*, team_members(*)')
+          .eq('rally_id', id)
+
+        const { data: schedule } = await supabase
+          .from('schedule_items')
+          .select('*')
+          .eq('rally_id', id)
+          .order('date')
+
         setRally(r)
+        setTeamMembers(team || [])
+        setScheduleItems(schedule || [])
         setLoading(false)
       } catch (unexpectedError) {
         console.error('Unexpected error:', unexpectedError)
@@ -42,93 +57,53 @@ export default function RallyDetail() {
     }
   }, [id, router.isReady])
 
-  if (loading) return (
-    <div style={{ 
-      minHeight: '100vh', 
-      backgroundColor: '#1e2a3a', 
-      color: 'white', 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      Loading...
-    </div>
-  )
+  if (loading) return <div>Loading...</div>
 
   if (error) return (
-    <div style={{ 
-      minHeight: '100vh', 
-      backgroundColor: '#1e2a3a', 
-      color: 'white', 
-      display: 'flex', 
-      flexDirection: 'column',
-      justifyContent: 'center', 
-      alignItems: 'center',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      <h2 style={{ color: 'red' }}>Error: {error}</h2>
-      <button 
-        onClick={() => router.reload()}
-        style={{
-          marginTop: '20px',
-          padding: '10px 20px',
-          backgroundColor: '#00d9cc',
-          color: 'black',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer'
-        }}
-      >
-        Try Again
-      </button>
+    <div>
+      <h2>Error: {error}</h2>
+      <button onClick={() => router.reload()}>Try Again</button>
     </div>
   )
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      backgroundColor: '#1e2a3a', 
-      color: 'white',
-      fontFamily: 'Arial, sans-serif',
-      padding: '20px'
-    }}>
-      <nav style={{ marginBottom: '30px' }}>
-        <Link href="/my-dashboard" style={{ 
-          color: '#00d9cc', 
-          textDecoration: 'none',
-          fontSize: '1rem',
-          display: 'inline-block'
-        }}>
-          ← Back to Dashboard
-        </Link>
-      </nav>
+    <div>
+      <Link href="/my-dashboard">← Back to Dashboard</Link>
 
-      <div style={{ 
-        backgroundColor: '#2d3e50', 
-        padding: '30px', 
-        borderRadius: '10px',
-        maxWidth: '800px',
-        margin: '0 auto'
-      }}>
-        <h1 style={{ 
-          color: '#00d9cc', 
-          marginBottom: '20px',
-          fontSize: '2.5rem'
-        }}>
-          {rally.name}
-        </h1>
-        <div>
-          <p style={{ marginBottom: '10px', fontSize: '1.1rem' }}>
-            <strong>Location:</strong> {rally.location}
-          </p>
-          <p style={{ fontSize: '1.1rem' }}>
-            <strong>Dates:</strong> {' '}
-            {new Date(rally.start_date).toLocaleDateString()} - {' '}
-            {new Date(rally.end_date).toLocaleDateString()}
-          </p>
-        </div>
+      <h1>{rally.name}</h1>
+      <div>
+        <p>Location: {rally.location}</p>
+        <p>
+          Dates: {new Date(rally.start_date).toLocaleDateString()} - {' '}
+          {new Date(rally.end_date).toLocaleDateString()}
+        </p>
       </div>
+
+      <h2>Team</h2>
+      {teamMembers.length === 0 ? (
+        <p>No team members</p>
+      ) : (
+        teamMembers.map(member => (
+          <div key={member.id}>
+            <p>{member.team_members.name}</p>
+            <p>{member.team_members.role || 'Team Member'}</p>
+          </div>
+        ))
+      )}
+
+      <h2>Schedule</h2>
+      {scheduleItems.length === 0 ? (
+        <p>No schedule items</p>
+      ) : (
+        scheduleItems.map(item => (
+          <div key={item.id}>
+            <p>{item.title}</p>
+            <p>
+              {new Date(item.date).toLocaleDateString()} {item.time}
+            </p>
+          </div>
+        ))
+      )}
     </div>
   )
 }
