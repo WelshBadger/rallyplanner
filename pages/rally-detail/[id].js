@@ -37,20 +37,96 @@ export default function RallyDetail() {
       }
     }
 
-    fetchRallyDetails()
-  }, [id])
+    if (router.isReady) {
+      fetchRallyDetails()
+    }
+  }, [id, router.isReady])
 
-  if (loading) return <div>Loading...</div>
-  if (error) return <div>Error: {error}</div>
+  if (loading) return (
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: '#1e2a3a', 
+      color: 'white', 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      Loading...
+    </div>
+  )
+
+  if (error) return (
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: '#1e2a3a', 
+      color: 'white', 
+      display: 'flex', 
+      flexDirection: 'column',
+      justifyContent: 'center', 
+      alignItems: 'center',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      <h2 style={{ color: 'red' }}>Error: {error}</h2>
+      <button 
+        onClick={() => router.reload()}
+        style={{
+          marginTop: '20px',
+          padding: '10px 20px',
+          backgroundColor: '#00d9cc',
+          color: 'black',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer'
+        }}
+      >
+        Try Again
+      </button>
+    </div>
+  )
 
   return (
-    <div>
-      <h1>{rally.name}</h1>
-      <p>Location: {rally.location}</p>
-      <p>
-        Dates: {new Date(rally.start_date).toLocaleDateString()} - {' '}
-        {new Date(rally.end_date).toLocaleDateString()}
-      </p>
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: '#1e2a3a', 
+      color: 'white',
+      fontFamily: 'Arial, sans-serif',
+      padding: '20px'
+    }}>
+      <Link href="/my-dashboard" style={{ 
+        color: '#00d9cc', 
+        textDecoration: 'none',
+        marginBottom: '20px',
+        display: 'block'
+      }}>
+        ← Back to Dashboard
+      </Link>
+
+      <div style={{ 
+        backgroundColor: '#2d3e50', 
+        padding: '20px', 
+        borderRadius: '10px',
+        maxWidth: '600px',
+        margin: '0 auto'
+      }}>
+        <h1 style={{ 
+          color: '#00d9cc', 
+          marginBottom: '20px',
+          fontSize: '2rem'
+        }}>
+          {rally.name}
+        </h1>
+        <div>
+          <p style={{ marginBottom: '10px' }}>
+            <strong>Location:</strong> {rally.location}
+          </p>
+          <p>
+            <strong>Dates:</strong> {' '}
+            {new Date(rally.start_date).toLocaleDateString()} - {' '}
+            {new Date(rally.end_date).toLocaleDateString()}
+          </p>
+        </div>
+      </div>
     </div>
   )
 }
