@@ -19,6 +19,12 @@ export default function RallyDetail() {
       if (!id) return
 
       try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+          router.push('/login')
+          return
+        }
+
         const { data: r, error: rallyError } = await supabase
           .from('rally_events')
           .select('*')
@@ -40,18 +46,16 @@ export default function RallyDetail() {
         const { data: allTeam } = await supabase
           .from('team_members')
           .select('*')
+          .eq('user_id', user.id)
           .order('name')
 
-        const { data: schedule } = await supabase
-          .from('schedule_items')
-          .select('*')
-          .eq('rally_id', id)
-          .order('date')
+        console.log('All team members:', allTeam)
+        console.log('Assigned team members:', team)
 
         setRally(r)
         setTeamMembers(team || [])
         setAllTeamMembers(allTeam || [])
-        setScheduleItems(schedule || [])
+        setScheduleItems([])
         setLoading(false)
       } catch (unexpectedError) {
         console.error('Unexpected error:', unexpectedError)
@@ -67,9 +71,17 @@ export default function RallyDetail() {
 
   const handleAssignTeamMember = async (memberId) => {
     try {
-      await supabase
+      console.log('Assigning member:', memberId, 'to rally:', id)
+      
+      const { data, error } = await supabase
         .from('rally_team_assignments')
         .insert({ rally_id: id, team_member_id: memberId })
+
+      if (error) {
+        console.error('Assignment error:', error)
+        alert('Failed to assign: ' + error.message)
+        return
+      }
 
       const { data: team } = await supabase
         .from('rally_team_assignments')
@@ -211,6 +223,8 @@ export default function RallyDetail() {
   const assignedIds = teamMembers.map(t => t.team_member_id)
   const unassignedMembers = allTeamMembers.filter(m => !assignedIds.includes(m.id))
 
+  console.log('Unassigned members:', unassignedMembers)
+
   return (
     <div style={pageStyle}>
       <nav style={navStyle}>
@@ -314,24 +328,9 @@ export default function RallyDetail() {
               <h2 style={{ color: '#00d9cc', margin: 0, fontSize: '1.5rem' }}>Schedule</h2>
               <button style={buttonStyle}>+ Add</button>
             </div>
-            {scheduleItems.length === 0 ? (
-              <p style={{ color: 'rgba(255,255,255,0.5)', textAlign: 'center', padding: '20px' }}>
-                No schedule items
-              </p>
-            ) : (
-              scheduleItems.map(item => (
-                <div key={item.id} style={itemStyle}>
-                  <div>
-                    <p style={{ fontWeight: '600', marginBottom: '6px', fontSize: '1rem' }}>
-                      {item.title}
-                    </p>
-                    <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>
-                      {new Date(item.date).toLocaleDateString()} {item.time}
-                    </p>
-                  </div>
-                </div>
-              ))
-            )}
+            <p style={{ color: 'rgba(255,255,255,0.5)', textAlign: 'center', padding: '20px' }}>
+              No schedule items
+            </p>
           </div>
 
           <div style={sectionStyle}>
@@ -380,9 +379,14 @@ export default function RallyDetail() {
           }} onClick={(e) => e.stopPropagation()}>
             <h2 style={{ color: '#00d9cc', marginBottom: '20px' }}>Assign Team Member</h2>
             {unassignedMembers.length === 0 ? (
-              <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '20px' }}>
-                All team members are already assigned
-              </p>
+              <div>
+                <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '20px' }}>
+                  All team members are already assigned
+                </p>
+                <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem' }}>
+                  Total team members: {allTeamMembers.length}
+                </p>
+              </div>
             ) : (
               unassignedMembers.map(member => (
                 <div 
