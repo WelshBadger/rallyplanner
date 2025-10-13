@@ -189,3 +189,29 @@ export default function RallyDetail() {
     </div>
   )
 }
+                }}>×</button>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background: '#2d3e50', borderRadius: '16px', padding: '28px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '20px' }}>Documents</h2>
+            <p style={{ color: 'rgba(255, 255, 255, 0.5)' }}>Coming soon...</p>
+          </div>
+
+          <div style={{ background: '#2d3e50', borderRadius: '16px', padding: '28px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '20px' }}>Notes</h2>
+            <p style={{ color: 'rgba(255, 255, 255, 0.5)' }}>Coming soon...</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Modals will be added in the next part */}
+    </div>
+  )
+}
+
+export async function getServerSideProps(context) {
+  console.log('Server-side Rally ID:', context.params.id)
+  return { props: {} }
+}
