@@ -11,6 +11,7 @@ export default function RallyDetail() {
   const [scheduleItems, setScheduleItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [showAssignModal, setShowAssignModal] = useState(false)
 
   useEffect(() => {
     const fetchRallyDetails = async () => {
@@ -133,6 +134,27 @@ export default function RallyDetail() {
     marginBottom: '24px'
   }
 
+  const modalOverlayStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000
+  }
+
+  const modalStyle = {
+    backgroundColor: '#2d3e50',
+    padding: '30px',
+    borderRadius: '12px',
+    maxWidth: '500px',
+    width: '90%'
+  }
+
   if (loading) return (
     <div style={pageStyle}>
       <div style={{ textAlign: 'center', marginTop: '100px' }}>Loading...</div>
@@ -216,7 +238,9 @@ export default function RallyDetail() {
           <div style={sectionStyle}>
             <div style={sectionHeaderStyle}>
               <h2 style={{ color: '#00d9cc', margin: 0, fontSize: '1.5rem' }}>Team</h2>
-              <button style={buttonStyle}>+ Assign</button>
+              <button style={buttonStyle} onClick={() => setShowAssignModal(true)}>
+                + Assign
+              </button>
             </div>
             {teamMembers.length === 0 ? (
               <p style={{ color: 'rgba(255,255,255,0.5)', textAlign: 'center', padding: '20px' }}>
@@ -280,6 +304,21 @@ export default function RallyDetail() {
           </div>
         </div>
       </div>
+
+      {showAssignModal && (
+        <div style={modalOverlayStyle} onClick={() => setShowAssignModal(false)}>
+          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ color: '#00d9cc', marginBottom: '20px' }}>Assign Team Member</h2>
+            <p style={{ marginBottom: '20px' }}>Modal content will go here</p>
+            <button 
+              style={buttonStyle}
+              onClick={() => setShowAssignModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
