@@ -110,6 +110,20 @@ export default function RallyDetail() {
     fontFamily: 'Arial, sans-serif'
   }
 
+  const navStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '20px 40px',
+    background: 'linear-gradient(180deg, #000000 0%, rgba(30, 42, 58, 0) 100%)'
+  }
+
+  const linkStyle = {
+    color: '#00d9cc',
+    textDecoration: 'none',
+    fontSize: '1rem'
+  }
+
   const containerStyle = {
     maxWidth: '1400px',
     margin: '0 auto',
@@ -128,6 +142,15 @@ export default function RallyDetail() {
     padding: '30px',
     borderRadius: '12px',
     height: '100%'
+  }
+
+  const sectionHeaderStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+    paddingBottom: '15px',
+    borderBottom: '2px solid rgba(0, 217, 204, 0.2)'
   }
 
   const gridStyle = {
@@ -166,7 +189,8 @@ export default function RallyDetail() {
     border: '1px solid #FF5252',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '0.8rem'
+    fontSize: '0.8rem',
+    fontWeight: '600'
   }
 
   if (loading) return (
@@ -179,6 +203,7 @@ export default function RallyDetail() {
     <div style={pageStyle}>
       <div style={{ textAlign: 'center', marginTop: '100px' }}>
         <h2 style={{ color: 'red' }}>Error: {error}</h2>
+        <button onClick={() => router.reload()} style={buttonStyle}>Try Again</button>
       </div>
     </div>
   )
@@ -188,6 +213,21 @@ export default function RallyDetail() {
 
   return (
     <div style={pageStyle}>
+      <nav style={navStyle}>
+        <Link href="/my-dashboard" style={linkStyle}>
+          ← Back to Dashboard
+        </Link>
+        <button 
+          onClick={async () => {
+            await supabase.auth.signOut()
+            router.push('/')
+          }}
+          style={buttonStyle}
+        >
+          Logout
+        </button>
+      </nav>
+
       <div style={containerStyle}>
         <div style={headerStyle}>
           <h1 style={{ 
@@ -237,17 +277,9 @@ export default function RallyDetail() {
 
         <div style={gridStyle}>
           <div style={sectionStyle}>
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center', 
-              marginBottom: '20px' 
-            }}>
+            <div style={sectionHeaderStyle}>
               <h2 style={{ color: '#00d9cc', margin: 0, fontSize: '1.5rem' }}>Team</h2>
-              <button 
-                style={buttonStyle} 
-                onClick={() => setShowAssignModal(true)}
-              >
+              <button style={buttonStyle} onClick={() => setShowAssignModal(true)}>
                 + Assign
               </button>
             </div>
@@ -278,12 +310,7 @@ export default function RallyDetail() {
           </div>
 
           <div style={sectionStyle}>
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center', 
-              marginBottom: '20px' 
-            }}>
+            <div style={sectionHeaderStyle}>
               <h2 style={{ color: '#00d9cc', margin: 0, fontSize: '1.5rem' }}>Schedule</h2>
               <button style={buttonStyle}>+ Add</button>
             </div>
@@ -294,15 +321,37 @@ export default function RallyDetail() {
             ) : (
               scheduleItems.map(item => (
                 <div key={item.id} style={itemStyle}>
-                  <p style={{ fontWeight: '600', marginBottom: '6px', fontSize: '1rem' }}>
-                    {item.title}
-                  </p>
-                  <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>
-                    {new Date(item.date).toLocaleDateString()} {item.time}
-                  </p>
+                  <div>
+                    <p style={{ fontWeight: '600', marginBottom: '6px', fontSize: '1rem' }}>
+                      {item.title}
+                    </p>
+                    <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>
+                      {new Date(item.date).toLocaleDateString()} {item.time}
+                    </p>
+                  </div>
                 </div>
               ))
             )}
+          </div>
+
+          <div style={sectionStyle}>
+            <div style={sectionHeaderStyle}>
+              <h2 style={{ color: '#00d9cc', margin: 0, fontSize: '1.5rem' }}>Documents</h2>
+              <button style={buttonStyle}>+ Upload</button>
+            </div>
+            <p style={{ color: 'rgba(255,255,255,0.5)', textAlign: 'center', padding: '20px' }}>
+              No documents uploaded
+            </p>
+          </div>
+
+          <div style={sectionStyle}>
+            <div style={sectionHeaderStyle}>
+              <h2 style={{ color: '#00d9cc', margin: 0, fontSize: '1.5rem' }}>Notes</h2>
+              <button style={buttonStyle}>+ Add</button>
+            </div>
+            <p style={{ color: 'rgba(255,255,255,0.5)', textAlign: 'center', padding: '20px' }}>
+              No notes yet
+            </p>
           </div>
         </div>
       </div>
@@ -314,22 +363,26 @@ export default function RallyDetail() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.7)',
+          backgroundColor: 'rgba(0,0,0,0.8)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           zIndex: 1000
-        }}>
+        }} onClick={() => setShowAssignModal(false)}>
           <div style={{
             backgroundColor: '#2d3e50',
             padding: '30px',
             borderRadius: '12px',
             maxWidth: '500px',
-            width: '90%'
-          }}>
+            width: '90%',
+            maxHeight: '70vh',
+            overflowY: 'auto'
+          }} onClick={(e) => e.stopPropagation()}>
             <h2 style={{ color: '#00d9cc', marginBottom: '20px' }}>Assign Team Member</h2>
             {unassignedMembers.length === 0 ? (
-              <p style={{ color: 'rgba(255,255,255,0.6)' }}>All team members are already assigned</p>
+              <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '20px' }}>
+                All team members are already assigned
+              </p>
             ) : (
               unassignedMembers.map(member => (
                 <div 
@@ -347,6 +400,9 @@ export default function RallyDetail() {
                       {member.role || 'Team Member'}
                     </p>
                   </div>
+                  <button style={{ ...buttonStyle, padding: '6px 12px', fontSize: '0.8rem' }}>
+                    Assign
+                  </button>
                 </div>
               ))
             )}
