@@ -93,34 +93,36 @@ export default function RallyDetail() {
       fontFamily: 'Arial, sans-serif',
       padding: '20px'
     }}>
-      <Link href="/my-dashboard" style={{ 
-        color: '#00d9cc', 
-        textDecoration: 'none',
-        marginBottom: '20px',
-        display: 'block'
-      }}>
-        ← Back to Dashboard
-      </Link>
+      <nav style={{ marginBottom: '30px' }}>
+        <Link href="/my-dashboard" style={{ 
+          color: '#00d9cc', 
+          textDecoration: 'none',
+          fontSize: '1rem',
+          display: 'inline-block'
+        }}>
+          ← Back to Dashboard
+        </Link>
+      </nav>
 
       <div style={{ 
         backgroundColor: '#2d3e50', 
-        padding: '20px', 
+        padding: '30px', 
         borderRadius: '10px',
-        maxWidth: '600px',
+        maxWidth: '800px',
         margin: '0 auto'
       }}>
         <h1 style={{ 
           color: '#00d9cc', 
           marginBottom: '20px',
-          fontSize: '2rem'
+          fontSize: '2.5rem'
         }}>
           {rally.name}
         </h1>
         <div>
-          <p style={{ marginBottom: '10px' }}>
+          <p style={{ marginBottom: '10px', fontSize: '1.1rem' }}>
             <strong>Location:</strong> {rally.location}
           </p>
-          <p>
+          <p style={{ fontSize: '1.1rem' }}>
             <strong>Dates:</strong> {' '}
             {new Date(rally.start_date).toLocaleDateString()} - {' '}
             {new Date(rally.end_date).toLocaleDateString()}
