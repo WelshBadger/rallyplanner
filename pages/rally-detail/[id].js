@@ -103,36 +103,264 @@ export default function RallyDetail() {
     }
   }
 
-  if (loading) return <div>Loading...</div>
-  if (error) return <div>Error: {error}</div>
+  const pageStyle = {
+    minHeight: '100vh',
+    backgroundColor: '#1e2a3a',
+    color: 'white',
+    fontFamily: 'Arial, sans-serif'
+  }
+
+  const containerStyle = {
+    maxWidth: '1400px',
+    margin: '0 auto',
+    padding: '40px 20px'
+  }
+
+  const headerStyle = {
+    backgroundColor: '#2d3e50',
+    padding: '40px',
+    borderRadius: '12px',
+    marginBottom: '30px'
+  }
+
+  const sectionStyle = {
+    backgroundColor: '#2d3e50',
+    padding: '30px',
+    borderRadius: '12px',
+    height: '100%'
+  }
+
+  const gridStyle = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: '24px',
+    marginBottom: '24px'
+  }
+
+  const itemStyle = {
+    backgroundColor: 'rgba(0, 217, 204, 0.08)',
+    padding: '16px',
+    borderRadius: '8px',
+    marginBottom: '12px',
+    border: '1px solid rgba(0, 217, 204, 0.15)',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  }
+
+  const buttonStyle = {
+    padding: '8px 16px',
+    backgroundColor: '#00d9cc',
+    color: '#000',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontWeight: '600',
+    fontSize: '0.85rem'
+  }
+
+  const removeButtonStyle = {
+    padding: '6px 12px',
+    backgroundColor: 'rgba(255, 82, 82, 0.2)',
+    color: '#FF5252',
+    border: '1px solid #FF5252',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontSize: '0.8rem'
+  }
+
+  if (loading) return (
+    <div style={pageStyle}>
+      <div style={{ textAlign: 'center', marginTop: '100px' }}>Loading...</div>
+    </div>
+  )
+
+  if (error) return (
+    <div style={pageStyle}>
+      <div style={{ textAlign: 'center', marginTop: '100px' }}>
+        <h2 style={{ color: 'red' }}>Error: {error}</h2>
+      </div>
+    </div>
+  )
 
   const assignedIds = teamMembers.map(t => t.team_member_id)
   const unassignedMembers = allTeamMembers.filter(m => !assignedIds.includes(m.id))
 
   return (
-    <div>
-      <h1>{rally.name}</h1>
-      <div>
-        <h2>Team</h2>
-        <button onClick={() => setShowAssignModal(true)}>+ Assign</button>
-        {teamMembers.map(member => (
-          <div key={member.id}>
-            <span>{member.team_members.name}</span>
-            <button onClick={() => handleRemoveTeamMember(member.id)}>Remove</button>
+    <div style={pageStyle}>
+      <div style={containerStyle}>
+        <div style={headerStyle}>
+          <h1 style={{ 
+            color: '#00d9cc', 
+            fontSize: '2.5rem',
+            marginBottom: '24px',
+            fontWeight: '700'
+          }}>
+            {rally.name}
+          </h1>
+          <div style={{ 
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '24px'
+          }}>
+            <div>
+              <p style={{ 
+                color: 'rgba(255,255,255,0.5)', 
+                fontSize: '0.85rem',
+                marginBottom: '8px',
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }}>
+                Location
+              </p>
+              <p style={{ fontSize: '1.1rem', fontWeight: '500' }}>
+                {rally.location}
+              </p>
+            </div>
+            <div>
+              <p style={{ 
+                color: 'rgba(255,255,255,0.5)', 
+                fontSize: '0.85rem',
+                marginBottom: '8px',
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }}>
+                Dates
+              </p>
+              <p style={{ fontSize: '1.1rem', fontWeight: '500' }}>
+                {new Date(rally.start_date).toLocaleDateString()} - {' '}
+                {new Date(rally.end_date).toLocaleDateString()}
+              </p>
+            </div>
           </div>
-        ))}
+        </div>
+
+        <div style={gridStyle}>
+          <div style={sectionStyle}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '20px' 
+            }}>
+              <h2 style={{ color: '#00d9cc', margin: 0, fontSize: '1.5rem' }}>Team</h2>
+              <button 
+                style={buttonStyle} 
+                onClick={() => setShowAssignModal(true)}
+              >
+                + Assign
+              </button>
+            </div>
+            {teamMembers.length === 0 ? (
+              <p style={{ color: 'rgba(255,255,255,0.5)', textAlign: 'center', padding: '20px' }}>
+                No team members assigned
+              </p>
+            ) : (
+              teamMembers.map(member => (
+                <div key={member.id} style={itemStyle}>
+                  <div>
+                    <p style={{ fontWeight: '600', marginBottom: '6px', fontSize: '1rem' }}>
+                      {member.team_members.name}
+                    </p>
+                    <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>
+                      {member.team_members.role || 'Team Member'}
+                    </p>
+                  </div>
+                  <button 
+                    style={removeButtonStyle}
+                    onClick={() => handleRemoveTeamMember(member.id)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div style={sectionStyle}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '20px' 
+            }}>
+              <h2 style={{ color: '#00d9cc', margin: 0, fontSize: '1.5rem' }}>Schedule</h2>
+              <button style={buttonStyle}>+ Add</button>
+            </div>
+            {scheduleItems.length === 0 ? (
+              <p style={{ color: 'rgba(255,255,255,0.5)', textAlign: 'center', padding: '20px' }}>
+                No schedule items
+              </p>
+            ) : (
+              scheduleItems.map(item => (
+                <div key={item.id} style={itemStyle}>
+                  <p style={{ fontWeight: '600', marginBottom: '6px', fontSize: '1rem' }}>
+                    {item.title}
+                  </p>
+                  <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>
+                    {new Date(item.date).toLocaleDateString()} {item.time}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
 
       {showAssignModal && (
-        <div>
-          <h3>Assign Team Member</h3>
-          {unassignedMembers.map(member => (
-            <div key={member.id}>
-              <span>{member.name}</span>
-              <button onClick={() => handleAssignTeamMember(member.id)}>Assign</button>
-            </div>
-          ))}
-          <button onClick={() => setShowAssignModal(false)}>Close</button>
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: '#2d3e50',
+            padding: '30px',
+            borderRadius: '12px',
+            maxWidth: '500px',
+            width: '90%'
+          }}>
+            <h2 style={{ color: '#00d9cc', marginBottom: '20px' }}>Assign Team Member</h2>
+            {unassignedMembers.length === 0 ? (
+              <p style={{ color: 'rgba(255,255,255,0.6)' }}>All team members are already assigned</p>
+            ) : (
+              unassignedMembers.map(member => (
+                <div 
+                  key={member.id} 
+                  style={{
+                    ...itemStyle,
+                    cursor: 'pointer',
+                    marginBottom: '10px'
+                  }}
+                  onClick={() => handleAssignTeamMember(member.id)}
+                >
+                  <div>
+                    <p style={{ fontWeight: '600', marginBottom: '4px' }}>{member.name}</p>
+                    <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>
+                      {member.role || 'Team Member'}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
+            <button 
+              style={{ 
+                ...buttonStyle, 
+                marginTop: '20px', 
+                width: '100%' 
+              }}
+              onClick={() => setShowAssignModal(false)}
+            >
+              Close
+            </button>
+          </div>
         </div>
       )}
     </div>
