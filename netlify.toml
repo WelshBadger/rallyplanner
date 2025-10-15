@@ -2,11 +2,12 @@
   command = "npm run build"
   publish = ".next"
 
-[build.environment]
-  NODE_VERSION = "18"
-  NPM_FLAGS = "--legacy-peer-deps"
-
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/rally-detail/*"
+  to = "/rally-detail/[id]"
   status = 200
+
+[[headers]]
+  for = "/rally-detail/*"
+  [headers.values]
+    X-Custom-Header = "Rally Detail Page"
