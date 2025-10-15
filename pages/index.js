@@ -1,10 +1,12 @@
-import Link from 'next/link'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 
-export default function Home() {
-  return (
-    <div>
-      <h1>Rally Planner</h1>
-      <Link href="/rally-detail/1">Go to Rally Detail</Link>
-    </div>
-  )
+export default function Index() {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.push('/home')
+  }, [])
+
+  return null
 }
