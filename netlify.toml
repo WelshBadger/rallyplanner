@@ -8,6 +8,7 @@
   status = 200
 
 [[headers]]
-  for = "/rally-detail/*"
+  for = "/*"
   [headers.values]
-    X-Custom-Header = "Rally Detail Page"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
