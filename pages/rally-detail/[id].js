@@ -15,6 +15,8 @@ export default function RallyDetail() {
   const [currentUser, setCurrentUser] = useState(null)
 
   useEffect(() => {
+    if (!router.isReady) return
+
     const fetchRallyDetails = async () => {
       if (!id) return
       try {
@@ -24,9 +26,9 @@ export default function RallyDetail() {
           return
         }
         setCurrentUser(user)
-        const { data: r, error: rallyError } = await supabase.from('rally_events').select('*').eq('id', id).single()
-        if (rallyError) {
-          setError('Unable to fetch rally details')
+        const { data: r } = await supabase.from('rally_events').select('*').eq('id', id).single()
+        if (!r) {
+          setError('Rally not found')
           setLoading(false)
           return
         }
@@ -37,22 +39,18 @@ export default function RallyDetail() {
         setAllTeamMembers(allTeam || [])
         setLoading(false)
       } catch (err) {
-        setError('An unexpected error occurred')
+        setError('An error occurred')
         setLoading(false)
       }
     }
-    if (router.isReady) {
-      fetchRallyDetails()
-    }
+
+    fetchRallyDetails()
   }, [id, router.isReady])
 
   const handleAssignTeamMember = async (memberId) => {
     try {
       const { error } = await supabase.from('rally_team_assignments').insert({ rally_id: id, team_member_id: memberId, user_id: currentUser.id })
-      if (error) {
-        alert('Failed to assign: ' + error.message)
-        return
-      }
+      if (error) throw error
       const { data: team } = await supabase.from('rally_team_assignments').select('*, team_members(*)').eq('rally_id', id)
       setTeamMembers(team || [])
       setShowAssignModal(false)
@@ -64,10 +62,7 @@ export default function RallyDetail() {
   const handleRemoveTeamMember = async (assignmentId) => {
     try {
       const { error } = await supabase.from('rally_team_assignments').delete().eq('id', assignmentId)
-      if (error) {
-        alert('Failed to remove: ' + error.message)
-        return
-      }
+      if (error) throw error
       const { data: team } = await supabase.from('rally_team_assignments').select('*, team_members(*)').eq('rally_id', id)
       setTeamMembers(team || [])
     } catch (err) {
@@ -77,7 +72,7 @@ export default function RallyDetail() {
 
   if (loading) return <div style={{ minHeight: '100vh', backgroundColor: '#1e2a3a', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white' }}>Loading...</div>
   if (error) return <div style={{ minHeight: '100vh', backgroundColor: '#1e2a3a', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'red' }}>{error}</div>
-  if (!rally) return <div style={{ minHeight: '100vh', backgroundColor: '#1e2a3a', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white' }}>Rally not found</div>
+  if (!rally) return null
 
   const assignedIds = teamMembers.map(t => t.team_member_id)
   const unassignedMembers = allTeamMembers.filter(m => !assignedIds.includes(m.id))
@@ -174,4 +169,3 @@ export default function RallyDetail() {
     </>
   )
 }
-
