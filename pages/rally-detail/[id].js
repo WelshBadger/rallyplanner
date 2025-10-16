@@ -87,86 +87,86 @@ export default function RallyDetail() {
   return (
     <>
       <style jsx global>{`
-        * { box-sizing: border-box; }
-        body, html { margin: 0; padding: 0; background-color: #1e2a3a; width: 100%; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { background-color: #1e2a3a !important; width: 100%; overflow-x: hidden; }
       `}</style>
-      <div style={{ minHeight: '100vh', backgroundColor: '#1e2a3a', color: 'white', fontFamily: 'Arial, sans-serif', width: '100vw', overflowX: 'hidden' }}>
-        <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px', background: 'linear-gradient(180deg, #000000 0%, rgba(30, 42, 58, 0) 100%)', width: '100%' }}>
-          <Link href="/my-dashboard" style={{ color: '#00d9cc', textDecoration: 'none', fontSize: '14px' }}>← Back</Link>
-          <button onClick={async () => { await supabase.auth.signOut(); router.replace('/home') }} style={{...buttonStyle, fontSize: '14px', padding: '6px 12px'}}>Logout</button>
+      <div style={{ minHeight: '100vh', backgroundColor: '#1e2a3a', color: 'white', fontFamily: 'Arial, sans-serif' }}>
+        <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 40px', background: 'linear-gradient(180deg, #000000 0%, rgba(30, 42, 58, 0) 100%)' }}>
+          <Link href="/my-dashboard" style={{ color: '#00d9cc', textDecoration: 'none' }}>← Back to Dashboard</Link>
+          <button onClick={async () => { await supabase.auth.signOut(); router.replace('/home') }} style={buttonStyle}>Logout</button>
         </nav>
-        <div style={{ width: '100%', padding: '20px', maxWidth: '100%' }}>
-          <div style={{ backgroundColor: '#2d3e50', padding: '20px', borderRadius: '12px', marginBottom: '20px', width: '100%' }}>
-            <h1 style={{ color: '#00d9cc', marginBottom: '15px', fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', margin: '0 0 15px 0', wordBreak: 'break-word' }}>{rally.name}</h1>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '40px 20px' }}>
+          <div style={{ backgroundColor: '#2d3e50', padding: '40px', borderRadius: '12px', marginBottom: '30px' }}>
+            <h1 style={{ color: '#00d9cc', marginBottom: '20px', fontSize: '2.5rem' }}>{rally.name}</h1>
+            <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px' }}>
               <div>
-                <p style={{ color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', fontSize: '0.75rem', margin: '0 0 5px 0' }}>Location</p>
-                <p style={{ fontSize: '1rem', margin: 0 }}>{rally.location}</p>
+                <p style={{ color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', fontSize: '0.85rem' }}>Location</p>
+                <p style={{ fontSize: '1.1rem' }}>{rally.location}</p>
               </div>
               <div>
-                <p style={{ color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', fontSize: '0.75rem', margin: '0 0 5px 0' }}>Dates</p>
-                <p style={{ fontSize: '1rem', margin: 0 }}>{new Date(rally.start_date).toLocaleDateString()} - {new Date(rally.end_date).toLocaleDateString()}</p>
+                <p style={{ color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', fontSize: '0.85rem' }}>Dates</p>
+                <p style={{ fontSize: '1.1rem' }}>{new Date(rally.start_date).toLocaleDateString()} - {new Date(rally.end_date).toLocaleDateString()}</p>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', width: '100%' }}>
-            <div style={{ backgroundColor: '#2d3e50', padding: '20px', borderRadius: '12px', width: '100%' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', borderBottom: '2px solid rgba(0, 217, 204, 0.2)', paddingBottom: '10px', gap: '10px' }}>
-                <h2 style={{ color: '#00d9cc', margin: 0, fontSize: '1.1rem' }}>Team</h2>
-                <button style={{...buttonStyle, fontSize: '0.85rem', padding: '6px 10px'}} onClick={() => setShowAssignModal(true)}>+ Assign</button>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+            <div style={{ backgroundColor: '#2d3e50', padding: '30px', borderRadius: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid rgba(0, 217, 204, 0.2)', paddingBottom: '15px' }}>
+                <h2 style={{ color: '#00d9cc', margin: 0 }}>Team</h2>
+                <button style={buttonStyle} onClick={() => setShowAssignModal(true)}>+ Assign</button>
               </div>
               {teamMembers.length === 0 ? (
-                <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', padding: '15px', margin: 0, fontSize: '0.9rem' }}>No team members assigned</p>
+                <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', padding: '20px' }}>No team members assigned</p>
               ) : (
                 teamMembers.map(member => (
-                  <div key={member.id} style={{ backgroundColor: 'rgba(0, 217, 204, 0.1)', padding: '10px', marginBottom: '8px', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ margin: 0, marginBottom: '3px', fontSize: '0.95rem', wordBreak: 'break-word' }}>{member.team_members.name}</p>
-                      <p style={{ color: 'rgba(255,255,255,0.6)', margin: 0, fontSize: '0.8rem' }}>{member.team_members.role}</p>
+                  <div key={member.id} style={{ backgroundColor: 'rgba(0, 217, 204, 0.1)', padding: '10px', marginBottom: '10px', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <p style={{ margin: 0, marginBottom: '4px' }}>{member.team_members.name}</p>
+                      <p style={{ color: 'rgba(255,255,255,0.6)', margin: 0, fontSize: '0.9rem' }}>{member.team_members.role}</p>
                     </div>
-                    <button style={{...removeButtonStyle, fontSize: '0.75rem', padding: '4px 8px', whiteSpace: 'nowrap'}} onClick={() => handleRemoveTeamMember(member.id)}>Remove</button>
+                    <button style={removeButtonStyle} onClick={() => handleRemoveTeamMember(member.id)}>Remove</button>
                   </div>
                 ))
               )}
             </div>
-            <div style={{ backgroundColor: '#2d3e50', padding: '20px', borderRadius: '12px', width: '100%' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', borderBottom: '2px solid rgba(0, 217, 204, 0.2)', paddingBottom: '10px', gap: '10px' }}>
-                <h2 style={{ color: '#00d9cc', margin: 0, fontSize: '1.1rem' }}>Schedule</h2>
-                <button style={{...buttonStyle, fontSize: '0.85rem', padding: '6px 10px'}}>+ Add</button>
+            <div style={{ backgroundColor: '#2d3e50', padding: '30px', borderRadius: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid rgba(0, 217, 204, 0.2)', paddingBottom: '15px' }}>
+                <h2 style={{ color: '#00d9cc', margin: 0 }}>Schedule</h2>
+                <button style={buttonStyle}>+ Add</button>
               </div>
-              <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', padding: '15px', margin: 0, fontSize: '0.9rem' }}>No schedule items</p>
+              <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', padding: '20px' }}>No schedule items</p>
             </div>
-            <div style={{ backgroundColor: '#2d3e50', padding: '20px', borderRadius: '12px', width: '100%' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', borderBottom: '2px solid rgba(0, 217, 204, 0.2)', paddingBottom: '10px', gap: '10px' }}>
-                <h2 style={{ color: '#00d9cc', margin: 0, fontSize: '1.1rem' }}>Documents</h2>
-                <button style={{...buttonStyle, fontSize: '0.85rem', padding: '6px 10px'}}>+ Upload</button>
+            <div style={{ backgroundColor: '#2d3e50', padding: '30px', borderRadius: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid rgba(0, 217, 204, 0.2)', paddingBottom: '15px' }}>
+                <h2 style={{ color: '#00d9cc', margin: 0 }}>Documents</h2>
+                <button style={buttonStyle}>+ Upload</button>
               </div>
-              <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', padding: '15px', margin: 0, fontSize: '0.9rem' }}>No documents uploaded</p>
+              <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', padding: '20px' }}>No documents uploaded</p>
             </div>
-            <div style={{ backgroundColor: '#2d3e50', padding: '20px', borderRadius: '12px', width: '100%' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', borderBottom: '2px solid rgba(0, 217, 204, 0.2)', paddingBottom: '10px', gap: '10px' }}>
-                <h2 style={{ color: '#00d9cc', margin: 0, fontSize: '1.1rem' }}>Notes</h2>
-                <button style={{...buttonStyle, fontSize: '0.85rem', padding: '6px 10px'}}>+ Add</button>
+            <div style={{ backgroundColor: '#2d3e50', padding: '30px', borderRadius: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid rgba(0, 217, 204, 0.2)', paddingBottom: '15px' }}>
+                <h2 style={{ color: '#00d9cc', margin: 0 }}>Notes</h2>
+                <button style={buttonStyle}>+ Add</button>
               </div>
-              <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', padding: '15px', margin: 0, fontSize: '0.9rem' }}>No notes yet</p>
+              <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', padding: '20px' }}>No notes yet</p>
             </div>
           </div>
         </div>
         {showAssignModal && (
           <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '20px' }} onClick={() => setShowAssignModal(false)}>
-            <div style={{ backgroundColor: '#2d3e50', padding: '20px', borderRadius: '12px', width: '100%', maxWidth: '400px', maxHeight: '80vh', overflowY: 'auto' }} onClick={(e) => e.stopPropagation()}>
-              <h2 style={{ color: '#00d9cc', marginBottom: '15px', margin: '0 0 15px 0', fontSize: '1.1rem' }}>Assign Team Member</h2>
+            <div style={{ backgroundColor: '#2d3e50', padding: '30px', borderRadius: '12px', width: '100%', maxWidth: '400px', maxHeight: '80vh', overflowY: 'auto' }} onClick={(e) => e.stopPropagation()}>
+              <h2 style={{ color: '#00d9cc', marginBottom: '20px' }}>Assign Team Member</h2>
               {unassignedMembers.length === 0 ? (
-                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>All team members are already assigned</p>
+                <p style={{ color: 'rgba(255,255,255,0.6)' }}>All team members are already assigned</p>
               ) : (
                 unassignedMembers.map(member => (
-                  <div key={member.id} style={{ backgroundColor: 'rgba(0, 217, 204, 0.1)', padding: '10px', marginBottom: '8px', borderRadius: '6px', cursor: 'pointer' }} onClick={() => handleAssignTeamMember(member.id)}>
-                    <p style={{ margin: 0, marginBottom: '3px', fontSize: '0.95rem' }}>{member.name}</p>
-                    <p style={{ color: 'rgba(255,255,255,0.6)', margin: 0, fontSize: '0.8rem' }}>{member.role}</p>
+                  <div key={member.id} style={{ backgroundColor: 'rgba(0, 217, 204, 0.1)', padding: '10px', marginBottom: '10px', borderRadius: '6px', cursor: 'pointer' }} onClick={() => handleAssignTeamMember(member.id)}>
+                    <p style={{ margin: 0, marginBottom: '4px' }}>{member.name}</p>
+                    <p style={{ color: 'rgba(255,255,255,0.6)', margin: 0, fontSize: '0.9rem' }}>{member.role}</p>
                   </div>
                 ))
               )}
-              <button style={{...buttonStyle, marginTop: '15px', width: '100%', fontSize: '0.9rem'}} onClick={() => setShowAssignModal(false)}>Close</button>
+              <button style={{ ...buttonStyle, marginTop: '20px', width: '100%' }} onClick={() => setShowAssignModal(false)}>Close</button>
             </div>
           </div>
         )}
