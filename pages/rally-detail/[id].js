@@ -21,7 +21,7 @@ export default function RallyDetail() {
       try {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
-          router.push('/login')
+          router.replace('/login')
           return
         }
         setCurrentUser(user)
@@ -33,6 +33,7 @@ export default function RallyDetail() {
           .single()
 
         if (rallyError) {
+          console.error('Rally fetch error:', rallyError)
           setError('Unable to fetch rally details')
           setLoading(false)
           return
@@ -54,6 +55,7 @@ export default function RallyDetail() {
         setAllTeamMembers(allTeam || [])
         setLoading(false)
       } catch (err) {
+        console.error('Unexpected error:', err)
         setError('An unexpected error occurred')
         setLoading(false)
       }
@@ -75,6 +77,7 @@ export default function RallyDetail() {
         })
 
       if (error) {
+        console.error('Assignment error:', error)
         alert('Failed to assign: ' + error.message)
         return
       }
@@ -87,6 +90,7 @@ export default function RallyDetail() {
       setTeamMembers(team || [])
       setShowAssignModal(false)
     } catch (err) {
+      console.error('Error assigning team member:', err)
       alert('Failed to assign team member')
     }
   }
@@ -99,6 +103,7 @@ export default function RallyDetail() {
         .eq('id', assignmentId)
 
       if (error) {
+        console.error('Remove error:', error)
         alert('Failed to remove: ' + error.message)
         return
       }
@@ -110,6 +115,7 @@ export default function RallyDetail() {
 
       setTeamMembers(team || [])
     } catch (err) {
+      console.error('Error removing team member:', err)
       alert('Failed to remove team member')
     }
   }
@@ -126,7 +132,11 @@ export default function RallyDetail() {
     </div>
   )
 
-  if (!rally) return null
+  if (!rally) return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#1e2a3a', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white' }}>
+      Rally not found
+    </div>
+  )
 
   const assignedIds = teamMembers.map(t => t.team_member_id)
   const unassignedMembers = allTeamMembers.filter(m => !assignedIds.includes(m.id))
@@ -138,7 +148,7 @@ export default function RallyDetail() {
     <div style={{ minHeight: '100vh', backgroundColor: '#1e2a3a', color: 'white', fontFamily: 'Arial, sans-serif' }}>
       <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 40px', background: 'linear-gradient(180deg, #000000 0%, rgba(30, 42, 58, 0) 100%)' }}>
         <Link href="/my-dashboard" style={{ color: '#00d9cc', textDecoration: 'none' }}>← Back to Dashboard</Link>
-        <button onClick={async () => { await supabase.auth.signOut(); router.push('/') }} style={buttonStyle}>Logout</button>
+        <button onClick={async () => { await supabase.auth.signOut(); router.replace('/home') }} style={buttonStyle}>Logout</button>
       </nav>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '40px 20px' }}>
