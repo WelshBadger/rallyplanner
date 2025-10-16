@@ -82,10 +82,24 @@ export default function RallyDetail() {
   return (
     <>
       <style jsx global>{`
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body, html { background-color: #1e2a3a !important; width: 100%; overflow-x: hidden; }
+        html, body {
+          margin: 0;
+          padding: 0;
+          background-color: #1e2a3a !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          overflow-x: hidden !important;
+          position: fixed !important;
+        }
+        #__next {
+          width: 100%;
+          height: 100%;
+        }
+        * {
+          box-sizing: border-box;
+        }
       `}</style>
-      <div style={{ minHeight: '100vh', backgroundColor: '#1e2a3a', color: 'white', fontFamily: 'Arial, sans-serif' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#1e2a3a', color: 'white', fontFamily: 'Arial, sans-serif', width: '100%', overflowX: 'hidden' }}>
         <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 40px', background: 'linear-gradient(180deg, #000000 0%, rgba(30, 42, 58, 0) 100%)' }}>
           <Link href="/my-dashboard" style={{ color: '#00d9cc', textDecoration: 'none' }}>← Back to Dashboard</Link>
           <button onClick={async () => { await supabase.auth.signOut(); router.replace('/home') }} style={buttonStyle}>Logout</button>
