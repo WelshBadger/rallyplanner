@@ -25,13 +25,6 @@ export default function RallyDetail() {
 
   const [showScheduleModal, setShowScheduleModal] = useState(false)
   const [editingSchedule, setEditingSchedule] = useState(null)
-  const [scheduleForm, setScheduleForm] = useState({
-    schedule_date: '',
-    schedule_time: '',
-    activity: '',
-    location: '',
-    notes: ''
-  })
 
 
   useEffect(() => {
