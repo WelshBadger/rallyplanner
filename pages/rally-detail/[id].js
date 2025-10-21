@@ -113,6 +113,48 @@ export default function RallyDetail() {
     }
   }
 
+
+  const handleAddSchedule = () => {
+    setEditingSchedule(null)
+    setScheduleForm({ schedule_date: '', schedule_time: '', activity: '', location: '', notes: '' })
+    setShowScheduleModal(true)
+  }
+
+  const handleEditSchedule = (item) => {
+    setEditingSchedule(item)
+    setScheduleForm({ schedule_date: item.schedule_date, schedule_time: item.schedule_time || '', activity: item.activity, location: item.location || '', notes: item.notes || '' })
+    setShowScheduleModal(true)
+  }
+
+  const handleSaveSchedule = async () => {
+    if (!scheduleForm.schedule_date || !scheduleForm.activity) {
+      alert('Date and Activity are required')
+      return
+    }
+    try {
+      if (editingSchedule) {
+        await supabase.from('rally_schedule').update(scheduleForm).eq('id', editingSchedule.id)
+      } else {
+        await supabase.from('rally_schedule').insert({ ...scheduleForm, rally_id: id, user_id: currentUser.id })
+      }
+      const { data: schedule } = await supabase.from('rally_schedule').select('*').eq('rally_id', id).order('schedule_date', { ascending: true }).order('schedule_time', { ascending: true })
+      setScheduleItems(schedule || [])
+      setShowScheduleModal(false)
+    } catch (err) {
+      alert('Failed to save schedule item')
+    }
+  }
+
+  const handleDeleteSchedule = async (scheduleId) => {
+    if (!confirm('Delete this schedule item?')) return
+    try {
+      await supabase.from('rally_schedule').delete().eq('id', scheduleId)
+      const { data: schedule } = await supabase.from('rally_schedule').select('*').eq('rally_id', id).order('schedule_date', { ascending: true }).order('schedule_time', { ascending: true })
+      setScheduleItems(schedule || [])
+    } catch (err) {
+      alert('Failed to delete schedule item')
+    }
+  }
   const pageStyle = {
     minHeight: '100vh',
     backgroundColor: '#1e2a3a',
