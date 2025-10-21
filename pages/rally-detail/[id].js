@@ -23,9 +23,6 @@ export default function RallyDetail() {
     notes: ''
   })
 
-  const [showScheduleModal, setShowScheduleModal] = useState(false)
-  const [editingSchedule, setEditingSchedule] = useState(null)
-
 
   useEffect(() => {
     const fetchRallyDetails = async () => {
