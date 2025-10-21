@@ -114,6 +114,7 @@ export default function RallyDetail() {
   }
 
 
+  const handleAddSchedule = () => {
     setEditingSchedule(null)
     setScheduleForm({ schedule_date: '', schedule_time: '', activity: '', location: '', notes: '' })
     setShowScheduleModal(true)
